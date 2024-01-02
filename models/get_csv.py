@@ -29,6 +29,7 @@ async def process_csv_file(file_path, message: types.Message):
                     return
 
 async def upload_csv(message: types.Message):
+    await message.reply("Пошёл процесс загрузки данных...")
     document_id = message.document.file_id
     file_info = await bot.get_file(document_id)
     downloaded_file = await bot.download_file(file_info.file_path)
@@ -39,11 +40,11 @@ async def upload_csv(message: types.Message):
 
     await process_csv_file(file_path, message)
     os.remove(file_path)
-    await message.reply("CSV файл обработан.")
+    await message.reply("Данные обработаны.")
 
 async def run_script(message: types.Message):
     subprocess.run([sys.executable, "db_init.py"])
-    await message.reply("Скрипт выполнен.")
+    await message.reply("Настройка схемы PostgreSQL выполнена.")
 
 def register_handlers(dp: Dispatcher):
     dp.register_message_handler(upload_csv, content_types=['document'])
