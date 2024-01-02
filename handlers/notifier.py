@@ -4,6 +4,7 @@ from aiogram import Dispatcher, types
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.exceptions import BotBlocked
 
+import config
 from create_bot import bot, dp
 from models import db
 
@@ -110,7 +111,7 @@ async def get_admins(chat_id):
     except Exception as e:
         return []
 
-    chat_id = -1001800450876
+    chat_id = config.CHAT_ID
     admins = await get_admins(chat_id)
     print(admins)
 
