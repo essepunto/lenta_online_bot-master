@@ -6,21 +6,23 @@ import config
 
 Base = declarative_base()
 
+class UserSection(Base):
+    __tablename__ = 'user_sections'
+    __table_args__ = {'extend_existing': True}
+    id = Column(Integer, primary_key=True)
+    section_name = Column(String(255), nullable=False)
+    user_associations = relationship("UserSectionAssociation", back_populates="user_section", cascade="all, delete-orphan")
+
+
 class User(Base):
     __tablename__ = 'users'
+    __table_args__ = {'extend_existing': True}
     user_id = Column(Integer, primary_key=True)
     first_name = Column(String(255))
     is_work = Column(Boolean, default=True)
     username = Column(String)
-    # Добавляем связь с UserSectionAssociation
-    user_sections = relationship("UserSectionAssociation", back_populates="user")
-
-class UserSection(Base):
-    __tablename__ = 'user_sections'
-    id = Column(Integer, primary_key=True)
-    section_name = Column(String(255), nullable=False)
-    # Добавляем связь с UserSectionAssociation
-    user_associations = relationship("UserSectionAssociation", back_populates="user_section")
+    # Добавляем связь с UserSectionAssociation с каскадным удалением
+    user_sections = relationship("UserSectionAssociation", back_populates="user", cascade="all, delete-orphan")
 
 class SkuToSection(Base):
     __tablename__ = 'sku_to_section'
@@ -29,8 +31,8 @@ class SkuToSection(Base):
 
 class UserSectionAssociation(Base):
     __tablename__ = 'user_section_association'
-    user_id = Column(Integer, ForeignKey('users.user_id'), primary_key=True)
-    user_section_id = Column(Integer, ForeignKey('user_sections.id'), primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.user_id', ondelete='CASCADE'), primary_key=True)
+    user_section_id = Column(Integer, ForeignKey('user_sections.id',ondelete='CASCADE'), primary_key=True)
     # Создание двусторонних связей с User и UserSection
     user = relationship("User", back_populates="user_sections")
     user_section = relationship("UserSection", back_populates="user_associations")

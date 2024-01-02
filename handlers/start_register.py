@@ -8,6 +8,7 @@ from models.db import create_user, is_user_registered, get_work_status_by_user_i
 from states import RegisterUserState
 from utils.section_mapper import section_mapping
 
+
 async def toggle_work_status(message: types.Message, state: FSMContext):
     user_id = message.from_user.id
     is_work = get_work_status_by_user_id(user_id)
