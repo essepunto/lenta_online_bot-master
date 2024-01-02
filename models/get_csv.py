@@ -24,7 +24,8 @@ async def process_csv_file(file_path):
 
                     session.commit()
             except sqlalchemy.exc.IntegrityError as e:
-                session.rollback()  # Откатываем изменения, если произошла ошибка
+                session.rollback()
+                # Откатываем изменения, если произошла ошибка
                 # Здесь вы можете добавить логику обработки ошибки, например, отправить сообщение пользователю
                 print("Ошибка: элемент с таким ключом уже существует.")
 
