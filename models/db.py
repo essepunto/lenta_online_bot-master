@@ -208,11 +208,3 @@ def remove_user_by_id(user_id):
 
 # Создание всех таблиц
 Base.metadata.create_all(engine)
-
-if __name__ == "__main__":
-    # Пример использования
-    if not is_user_registered(12345):
-        create_user(12345, 'Alex', ['Бакалея', 'Напитки'], True)
-
-    print(get_section_by_user_id(12345))
-    print(get_work_status_by_user_id(12345))

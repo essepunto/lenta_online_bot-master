@@ -3,6 +3,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 import keyboards
+import models.db
 from create_bot import bot, dp
 from models.db import create_user, is_user_registered, get_work_status_by_user_id, update_work_status
 from states import RegisterUserState
@@ -91,6 +92,10 @@ async def cancel_action(message: types.Message, state: FSMContext):
     await state.finish()  # Завершаем текущее состояние
     await message.answer("Действие отменено.", reply_markup=types.ReplyKeyboardRemove())
 
+async def remove_me(message: types.Message, state: FSMContext):
+    models.db.remove_user_by_id(message.from_user.id)
+    await bot.send_message(message.from_user.id,"Вы были удалены из базы данных бота. Для повторной регистрации нажмите \n"
+                                                "/register")
 
 def register_handlers_client(dp):
     dp.register_message_handler(cancel_action,lambda message: message.text and message.text.lower() == "отмена", state="*")
@@ -99,4 +104,5 @@ def register_handlers_client(dp):
     dp.register_callback_query_handler(handle_section_choice, state=RegisterUserState.waiting_for_section)
     dp.register_message_handler(finish_registration, commands=['save'], state=RegisterUserState.waiting_for_section)
     dp.register_message_handler(toggle_work_status, commands=['change_status'], state=None)
+    dp.register_message_handler(remove_me, commands=['remove_me'], state=None)
 
