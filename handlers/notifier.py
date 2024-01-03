@@ -35,7 +35,7 @@ async def process_sku_message(text, chat_id, message_id):
     product_info = extract_product_info(text)
     if not product_info["sku"]:
         print(product_info)
-        await bot.send_message(chat_id, "Не удалось извлечь SKU из сообщения.")
+        #await bot.send_message(chat_id, "Не удалось извлечь SKU из сообщения.")
         return
 
     await process_sku_and_send_messages(product_info, chat_id, message_id)
