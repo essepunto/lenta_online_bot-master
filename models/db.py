@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Table, exists, create_engine
+from sqlalchemy import Column, BigInteger, String, Boolean, ForeignKey, Table, exists, create_engine
 from sqlalchemy.exc import NoResultFound, SQLAlchemyError
 from sqlalchemy.orm import declarative_base, relationship, sessionmaker, Session
 
@@ -10,8 +10,8 @@ SessionLocal = sessionmaker(bind=engine)
 
 # Связующая таблица для отношения многие-ко-многим между User и UserSection
 user_section_association = Table('user_section_association', Base.metadata,
-                                 Column('user_id', Integer, ForeignKey('users.user_id')),
-                                 Column('user_section_id', Integer, ForeignKey('user_sections.id'))
+                                 Column('user_id', BigInteger, ForeignKey('users.user_id')),
+                                 Column('user_section_id', BigInteger, ForeignKey('user_sections.id'))
                                  )
 
 
@@ -19,7 +19,7 @@ user_section_association = Table('user_section_association', Base.metadata,
 class User(Base):
     __tablename__ = 'users'
 
-    user_id = Column(Integer, primary_key=True)
+    user_id = Column(BigInteger, primary_key=True)
     username = Column(String)
     first_name = Column(String)
     is_work = Column(Boolean, default=True)
@@ -33,7 +33,7 @@ class User(Base):
 class UserSection(Base):
     __tablename__ = 'user_sections'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(BigInteger, primary_key=True)
     section_name = Column(String, nullable=False)
 
     def __repr__(self):
