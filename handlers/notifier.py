@@ -21,7 +21,7 @@ def extract_product_info(text):
             "name": match.group(3).strip(),
             "section_number": match.group(4),
             "section": match.group(5).strip(),
-            "assembly_time": match.group(6)
+
         }
     else:
         return {
@@ -30,7 +30,7 @@ def extract_product_info(text):
             "name": None,
             "section_number": None,
             "section": None,
-            "assembly_time": None
+
         }
 
 
@@ -69,7 +69,6 @@ async def send_product_info_to_user(user_id, product_info, chat_id, message_id):
 async def send_sku_message(user_id, product_info, chat_id, message_id):
     name = product_info["name"]
     section = product_info["section"]
-    assembly_time = product_info["assembly_time"]
     chat_id_str = str(chat_id)[4:]
     link = f"https://t.me/c/{chat_id_str}/{message_id}"
 
@@ -79,7 +78,6 @@ async def send_sku_message(user_id, product_info, chat_id, message_id):
     message_text = (
         f"📊 Секция: {section}\n"
         f"🛒 Товар: {name}\n"
-        f"🕗 Время: {assembly_time}"
     )
 
     await bot.send_message(user_id, message_text, reply_markup=keyboard)
