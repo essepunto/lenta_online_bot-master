@@ -4,41 +4,53 @@ from aiogram import Dispatcher, types
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.exceptions import BotBlocked
 
-import config
 from create_bot import bot, dp
 from models import db
+
+async def handle_text_message(message: types.Message):
+    if message.text:
+        chat_id = message.chat.id
+        message_id = message.message_id
+        text = message.text
+        async with dp.current_state(chat=message.chat.id).proxy():
+            await process_sku_message(text, chat_id, message_id)
+            print(chat_id)
 
 
 # Функция для извлечения информации о товаре из текста
 def extract_product_info(text):
-    match = re.search(
+    try:
+        match = re.search(
         r'SKU:\s*(\d+)\s*Остатки:\s*(\d+)\s*(?:кг|шт).*?Наименование:\s*(.*?)\s*Номер секции:\s*(\d+)\s*Секция:\s*(.*?)\s*Время окончания сборки:\s*([а-яА-ЯёЁa-zA-Z0-9\s:]+)',
-        text, re.DOTALL)
-    if match:
-        return {
+            text, re.DOTALL)
+        if match:
+            return {
             "sku": match.group(1),
             "quantity": match.group(2),
             "name": match.group(3).strip(),
             "section_number": match.group(4),
             "section": match.group(5).strip(),
-
-        }
-    else:
-        return {
+            }
+        else:
+            return {
             "sku": None,
             "quantity": None,
             "name": None,
             "section_number": None,
             "section": None,
 
-        }
+            }
+    except TypeError:
+        # Обработка ошибки, если text не является строкой или байтовым объектом
+        print("Ошибка: Ожидалась строка или объект, подобный строке")
+    # Дополнительный код здесь
 
 
 # Функция обработки сообщения с информацией о товаре
 async def process_sku_message(text, chat_id, message_id):
     product_info = extract_product_info(text)
     if not product_info["sku"]:
-        print("SKU товара не найден в сообщении.")
+        print(text)
         return
 
     if not product_info["section"]:
@@ -94,6 +106,9 @@ async def handle_photo_message(message: types.Message):
             print(chat_id)
 
 
+
+
+
 async def user_left(message: types.Message):
     user_id = message.left_chat_member.id
     username = message.left_chat_member.username
@@ -104,4 +119,5 @@ async def user_left(message: types.Message):
 # Функция регистрации хэндлеров
 def register_handlers(dp: Dispatcher):
     dp.register_message_handler(handle_photo_message, content_types=['photo'])
+    dp.register_message_handler(handle_text_message, content_types=['text'])
     dp.register_message_handler(user_left, content_types=['left_chat_member'])

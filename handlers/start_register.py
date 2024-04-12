@@ -99,10 +99,10 @@ async def remove_me(message: types.Message, state: FSMContext):
 
 def register_handlers_client(dp):
     dp.register_message_handler(cancel_action,lambda message: message.text and message.text.lower() == "отмена", state="*")
-    dp.register_message_handler(start, commands=['start'], state=None)
-    dp.register_message_handler(register_command, commands=['register'], state=None)
+    dp.register_message_handler(start, commands=['start'])
+    dp.register_message_handler(register_command, commands=['register'])
     dp.register_callback_query_handler(handle_section_choice, state=RegisterUserState.waiting_for_section)
     dp.register_message_handler(finish_registration, commands=['save'], state=RegisterUserState.waiting_for_section)
-    dp.register_message_handler(toggle_work_status, commands=['change_status'], state=None)
-    dp.register_message_handler(remove_me, commands=['remove_me'], state=None)
+    dp.register_message_handler(toggle_work_status, commands=['change_status'])
+    dp.register_message_handler(remove_me, commands=['remove_me'])
 
