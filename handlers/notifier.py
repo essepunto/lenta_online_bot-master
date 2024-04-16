@@ -21,8 +21,7 @@ async def handle_text_message(message: types.Message):
 def extract_product_info(text):
     try:
         match = re.search(
-        r'SKU:\s*(\d+)\s*Остатки:\s*(\d+)\s*(?:кг|шт).*?Наименование:\s*(.*?)\s*Номер секции:\s*(\d+)\s*Секция:\s*(.*?)\s*Время окончания сборки:\s*([а-яА-ЯёЁa-zA-Z0-9\s:]+)',
-            text, re.DOTALL)
+            r'SKU:\s*(\d+)\s*Остатки:\s*(\d+)\s*(?:кг|шт).*?Наименование:\s*(.*?)\s*Номер секции:\s*(\d+)\s*Секция:\s*(.*?)\s*(?:Время окончания сборки|Время до окончания сборки):\s*([а-яА-ЯёЁa-zA-Z0-9\s:]+)', re.DOTALL)
         if match:
             return {
             "sku": match.group(1),
