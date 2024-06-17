@@ -207,5 +207,36 @@ def remove_user_by_id(user_id):
         db.close()
 
 
+
+
+
+
+
+def get_user_ids_by_sections(section_names):
+    db = SessionLocal()
+    try:
+        # Найти секции с указанными именами
+        sections = db.query(UserSection).filter(UserSection.section_name.in_(section_names)).all()
+
+        if not sections:
+            print(f"No sections found with names {section_names}")
+            return []
+
+        section_ids = [section.id for section in sections]
+        print(f"Section IDs found: {section_ids}")
+
+        # Найти user_ids, связанные с этими секциями
+        user_ids = db.query(user_section_association.c.user_id).filter(
+            user_section_association.c.user_section_id.in_(section_ids)).distinct().all()
+
+        print(f"User IDs found: {user_ids}")
+
+        return [user_id[0] for user_id in user_ids]
+    except SQLAlchemyError as e:
+        print(f"Error: {e}")
+        return []
+    finally:
+        db.close()
+
 # Создание всех таблиц
 Base.metadata.create_all(engine)
