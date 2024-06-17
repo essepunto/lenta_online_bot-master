@@ -20,36 +20,32 @@ async def handle_text_message(message: types.Message):
 # Функция для извлечения информации о товаре из текста
 def extract_product_info(text):
     try:
-        match = re.search(
-            r'SKU:\s*(\d+)\s*Остатки:\s*(\d+)\s*(?:кг|шт).*?Наименование:\s*(.*?)\s*Номер секции:\s*(\d+)\s*Секция:\s*(.*?)\s*(?:Время окончания сборки|Время до окончания сборки):\s*([а-яА-ЯёЁa-zA-Z0-9\s:]+)', re.DOTALL)
+        match = re.search(r'SKU:\s*(\d+)\s*Остатки:\s*(\d+)\s*(?:кг|шт).*?Наименование:\s*(.*?)\s*Номер секции:\s*(\d+)\s*Секция:\s*(.*?)\s*(?:Время окончания сборки|Время до окончания сборки):\s*([а-яА-ЯёЁa-zA-Z0-9\s:]+)', text, re.DOTALL)
         if match:
             return {
-            "sku": match.group(1),
-            "quantity": match.group(2),
-            "name": match.group(3).strip(),
-            "section_number": match.group(4),
-            "section": match.group(5).strip(),
+                "sku": match.group(1),
+                "quantity": match.group(2),
+                "name": match.group(3).strip(),
+                "section_number": match.group(4),
+                "section": match.group(5).strip(),
             }
         else:
-            return {
-            "sku": None,
-            "quantity": None,
-            "name": None,
-            "section_number": None,
-            "section": None,
-
-            }
+            return None
     except TypeError:
         # Обработка ошибки, если text не является строкой или байтовым объектом
         print("Ошибка: Ожидалась строка или объект, подобный строке")
-    # Дополнительный код здесь
+        return None
 
 
 # Функция обработки сообщения с информацией о товаре
 async def process_sku_message(text, chat_id, message_id):
     product_info = extract_product_info(text)
+    if product_info is None:
+        print(f"Error: No product info found for text: {text}")
+        return
+
     if not product_info["sku"]:
-        print(text)
+        print("Error: SKU not found in product info")
         return
 
     if not product_info["section"]:
@@ -103,9 +99,6 @@ async def handle_photo_message(message: types.Message):
         async with dp.current_state(chat=message.chat.id).proxy():
             await process_sku_message(caption, chat_id, message_id)
             print(chat_id)
-
-
-
 
 
 async def user_left(message: types.Message):
